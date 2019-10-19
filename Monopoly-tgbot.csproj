@@ -52,7 +52,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SourceCode\MessageHandler.cs" />
     <Compile Include="SourceCode\WinForms\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
