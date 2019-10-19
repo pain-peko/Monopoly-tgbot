@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monopoly-tgbot", "Monopoly-tgbot.csproj", "{61AAAB8B-36FD-4552-8B4D-9D37DCA0E85E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{61AAAB8B-36FD-4552-8B4D-9D37DCA0E85E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61AAAB8B-36FD-4552-8B4D-9D37DCA0E85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61AAAB8B-36FD-4552-8B4D-9D37DCA0E85E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61AAAB8B-36FD-4552-8B4D-9D37DCA0E85E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BC1503A6-89F4-4743-9AB2-A86AF7E8FFA4}
+	EndGlobalSection
+EndGlobal

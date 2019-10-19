@@ -1,0 +1,16 @@
+
+.vs/Monopoly-tgbot/v16/.suo
+.vs/Monopoly-tgbot/v16/Server/sqlite3/db.lock
+.vs/Monopoly-tgbot/v16/Server/sqlite3/storage.ide
+App.config
+obj/Debug/DesignTimeResolveAssemblyReferences.cache
+obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+obj/Debug/Monopoly-tgbot.csproj.CoreCompileInputs.cache
+obj/Debug/Monopoly-tgbot.csprojAssemblyReference.cache
+Properties/Resources.Designer.cs
+Properties/AssemblyInfo.cs
+Properties/Resources.resx
+Properties/Settings.Designer.cs
+Properties/Settings.settings
+.vs/Monopoly-tgbot/v16/Server/sqlite3/storage.ide-wal
+.vs/Monopoly-tgbot/v16/Server/sqlite3/storage.ide-shm
