@@ -1,4 +1,6 @@
-bin/Debug/*
+
 packages/*
 obj/*
 .vs/*
+*.exe
+*.pdb

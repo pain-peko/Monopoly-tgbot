@@ -21,7 +21,6 @@ namespace Monopoly_tgbot
         {
             InitializeComponent();
             Client = new TelegramBotClient(token);
-            Telegram.Bot.Types.User Banker = Client.GetMeAsync().Result;
             Client.OnMessage += MessageHandlerAsync;
             Reciving = false;
         }
