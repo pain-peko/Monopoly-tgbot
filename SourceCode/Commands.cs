@@ -80,13 +80,6 @@ namespace Monopoly_tgbot
                 if (ActivatedCommandsList[i].Name == name && ActivatedCommandsList[i].Activator == args.Message.Chat.Id)
                     ActivatedCommandsList.RemoveAt(i);
         }
-        static public bool IsCommand(string text)
-        {
-            if (text != null && text[0] == '/')
-                return true;
-            else
-                return false;
-        }
         public bool ContainsActivatedCommand(List<Command> list)
         {
             for (int i = 0; i < list.Count(); i++)

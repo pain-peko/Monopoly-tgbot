@@ -34,8 +34,8 @@ namespace Monopoly_tgbot
 
             InitializeComponent();
             Client = new TelegramBotClient(token);
-            Client.OnMessage += CommandHandlerAsync;
             Client.OnMessage += MessageHandlerAsync;
+            Client.OnMessage += CommandHandlerAsync;
         }
 
         private async void CommandHandlerAsync(object sender, MessageEventArgs args)
@@ -94,7 +94,7 @@ namespace Monopoly_tgbot
             {
                 var CommandsList = new Commands();
 
-                if (!CommandsList.ContainsActivatedCommand(args))
+                if (!CommandsList.ContainsActivatedCommand(args) && args.Message.Text[0] != '/')
                 {
                     AddText($"Попытка взаимодействия пользователя {args.Message.Chat.FirstName} {args.Message.Chat.LastName} ({args.Message.Chat.Id} - {args.Message.Chat.Username})");
 
@@ -110,6 +110,15 @@ namespace Monopoly_tgbot
                         else if (IsSendMoneyRequest(args.Message.Text, GamerList))
                         {
                             SendMoneyRequest(args.Message.Text, Me, GamerList, args);
+                        }
+                        else if (args.Message.Text == "Баланс")
+                        {
+                            await Client.SendTextMessageAsync(args.Message.Chat.Id, $"Ваш баланс: {Me.money}M", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
+                        }
+                        else if (args.Message.Text == "Вперед")
+                        {
+                            Me.PayMe(2);
+                            await Client.SendTextMessageAsync(args.Message.Chat.Id, $"Ваш баланс: {Me.money}M", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                         }
                         else
                         {
