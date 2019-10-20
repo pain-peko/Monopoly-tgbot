@@ -31,13 +31,9 @@ namespace Monopoly_tgbot
                 var GamerList = new List<Gamer>(); //временно
                 if (IsPlayerExist(args.Message.Chat.Id, GamerList))
                 {
-                    var Me = GetUser(args.Message.Chat.Id, GamerList);
+                    var Me = GetGamer(args.Message.Chat.Id, GamerList);
 
-                    if (args.Message.Text[0] == '+')
-                    {
-                        Stonks(args.Message.Text, Me, args);
-                    }
-                    else if (args.Message.Text[0] == '-')
+                    if (args.Message.Text[0] == '+' || args.Message.Text[0] == '-')
                     {
                         Stonks(args.Message.Text, Me, args);
                     }
@@ -98,7 +94,7 @@ namespace Monopoly_tgbot
         }
         static private async void SendMoneyRequest (string text, Gamer me, List<Gamer> list, MessageEventArgs args)
         {
-            var user = GetUser(text[0], list);
+            var user = GetGamer(text[0], list);
             text.Remove(0, 1);
             if (text[0] == ' ')
                 text.Remove(0, 1);
