@@ -11,6 +11,7 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Newtonsoft.Json;
 using System.IO;
+using Telegram.Bot.Types.Enums;
 
 namespace Monopoly_tgbot
 {
@@ -18,13 +19,15 @@ namespace Monopoly_tgbot
     {
         public static TelegramBotClient Client;
 
+
         public string usersPath = "Files/Users.json";
 
         public const string SecretPassword = "Альфа Влад";
 
         const string token = "928805208:AAFqHquYSpuNQxCj7RORd7TzGyTXpsHm44E";
 
-        List<string> CommandNames = new List<string>();
+        List<string> CommandNames = new List<string>();     
+
         public Form1()
         {
             CommandNames.Add("/add_me");
@@ -89,7 +92,7 @@ namespace Monopoly_tgbot
             {
                 AddText($"Попытка взаимодействия пользователя {args.Message.Chat.FirstName} {args.Message.Chat.LastName} ({args.Message.Chat.Id} - {args.Message.Chat.Username})");
 
-                var GamerList = new List<Gamer>(); //временно
+                var GamerList = JsonConvert.DeserializeObject<List<Gamer>>(File.ReadAllText(usersPath));
                 if (IsPlayerExist(args.Message.Chat.Id, GamerList))
                 {
                     var Me = GetGamer(args.Message.Chat.Id, GamerList);
@@ -104,13 +107,14 @@ namespace Monopoly_tgbot
                     }
                     else
                     {
-                        await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод");
+                        await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод", ParseMode.Default, false, false, 0,KeyboardConstructor.Keyboard());
                     }
                 }
                 else
                 {
-                    await Client.SendTextMessageAsync(args.Message.Chat.Id, "Ты не в игре лол");
+                    await Client.SendTextMessageAsync(args.Message.Chat.Id, "Ты не в игре лол", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                 }
+                File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList));
             }
         }
         #region MessageHandler Funcs
@@ -124,19 +128,17 @@ namespace Monopoly_tgbot
             else
                 throw new ArgumentException("Непонятно, какое действие с деньгами проводить");
 
-            text.Remove(0, 1);
-
             try
             {
-                float tempMoney = Convert.ToSingle(text);
+                float tempMoney = Convert.ToSingle(text.Remove(0, 1));
                 if (addMoney)
                     me.PayMe(tempMoney);
-                else if (!addMoney)
+                else
                     me.PayTo(tempMoney);
             }
             catch (FormatException)
             {
-                await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод");
+                await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
             }
         }
         private bool IsSendMoneyRequest (string text, List<Gamer> list)
@@ -156,9 +158,8 @@ namespace Monopoly_tgbot
         private async void SendMoneyRequest (string text, Gamer me, List<Gamer> list, MessageEventArgs args)
         {
             var user = GetGamer(text[0], list);
-            text.Remove(0, 1);
-            if (text[0] == ' ')
-                text.Remove(0, 1);
+            text = text.Remove(0, 1);
+            text = text.Trim();
             try
             {
                 float tempMoney = Convert.ToSingle(text);
@@ -166,26 +167,16 @@ namespace Monopoly_tgbot
             }
             catch(FormatException)
             {
-                await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод");
+                await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
             }
         }
         private Gamer GetGamer (char userName, List<Gamer> list)
         {
-            for (int i = 0; i < list.Count(); i++)
-            {
-                if (list[i].userName == userName)
-                    return list[i];
-            }
-            throw new ArgumentException("Сюда код не должен доходить, чини");
+            return list.Find(item => item.userName == userName);
         }
         private Gamer GetGamer(long id, List<Gamer> list)
         {
-            for (int i = 0; i < list.Count(); i++)
-            {
-                if (list[i].ID == id)
-                    return list[i];
-            }
-            throw new ArgumentException("Сюда код не должен доходить, чини");
+            return list.Find(item => item.ID == id);
         }
         #endregion
 
@@ -209,10 +200,6 @@ namespace Monopoly_tgbot
         }
         void Start()
         {
-            var tmp = new List<Gamer>();
-            tmp.Add(new Gamer(200857582, 'И'));
-            tmp.Add(new Gamer(274721450, 'А'));
-            File.WriteAllText("usersPath", JsonConvert.SerializeObject(tmp));
             Client.StartReceiving();
             StartStop.Text = "Stop";
             AddText("Bot started");
