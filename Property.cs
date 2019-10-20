@@ -21,7 +21,7 @@ namespace Monopoly_tgbot
                 if(tag == "Transport" || tag == "Electricity")
                 {
                     tier = -1;
-                    foreach (var prp in owner.properties)
+                    foreach (var prp in Gamer.GetGamerByID(ownerID).properties)
                     {
                         if (prp.tag == tag)
                             tier++;

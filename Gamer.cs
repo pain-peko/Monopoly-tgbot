@@ -14,8 +14,7 @@ namespace Monopoly_tgbot
         public char userName;
         public float money;
         public List<Property> properties;
-        public string Money { get { return "Баланс: " + money.ToString("0.000"); } }
-        public Gamer(long id,char name)
+        public void SetUpGamer(long id,char name)
         {
             ID = id;
             userName = name;

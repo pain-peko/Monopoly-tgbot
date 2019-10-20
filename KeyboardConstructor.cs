@@ -25,4 +25,5 @@ namespace Monopoly_tgbot
             };
             return rmu;
         }
+    }
 }
