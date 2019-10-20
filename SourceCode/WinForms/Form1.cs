@@ -20,22 +20,22 @@ namespace Monopoly_tgbot
         public static TelegramBotClient Client;
 
 
-        public  static string usersPath = "Files/Users.json";
+        public static string usersPath = "Files/Users.json";
 
         public const string SecretPassword = "Альфа Влад";
 
         const string token = "928805208:AAFqHquYSpuNQxCj7RORd7TzGyTXpsHm44E";
 
-        List<string> CommandNames = new List<string>();     
-
+        List<string> CommandNames = new List<string>();
+        
         public Form1()
         {
             CommandNames.Add("/add_me");
 
             InitializeComponent();
             Client = new TelegramBotClient(token);
-            Client.OnMessage += CommandHandlerAsync;
             Client.OnMessage += MessageHandlerAsync;
+            Client.OnMessage += CommandHandlerAsync;
         }
 
         private async void CommandHandlerAsync(object sender, MessageEventArgs args)
@@ -46,7 +46,7 @@ namespace Monopoly_tgbot
 
                 if (args.Message.Text == CommandNames[0])
                 {
-                    if (!CommandsList.ActivatedCommandsList.Contains(new ActivatedCommand($"{CommandNames[0]}", args)))
+                    if (!CommandsList.ContainsActivatedCommand(CommandNames[0], args))
                     {
                         CommandsList.ActivatedCommandsList.Add(new ActivatedCommand($"{CommandNames[0]}", args));
                         await Client.SendTextMessageAsync(args.Message.Chat.Id, "Напиши секретный пароль");
@@ -54,20 +54,21 @@ namespace Monopoly_tgbot
                     else
                         await Client.SendTextMessageAsync(args.Message.Chat.Id, "Не повторяй 2 раза одну и ту же команду");
                 }
-                else if (CommandsList.ActivatedCommandsList.Contains(new ActivatedCommand($"{CommandNames[0]}", args)))
+                else if (CommandsList.ContainsActivatedCommand(CommandNames[0], args))
                 {
                     if (args.Message.Text == SecretPassword)
                     {
                         await Client.SendTextMessageAsync(args.Message.Chat.Id, "Введи свой никнейм, состоящий из 1 буквы");
                         CommandsList.ActivatedCommandsList.Add(new ActivatedCommand($"Add UserName", args));
+                        CommandsList.RemoveCommand(CommandNames[0], args);
                     }
                     else
                     {
-                        CommandsList.ActivatedCommandsList.Remove(new ActivatedCommand($"{CommandNames[0]}", args));
+                        CommandsList.RemoveCommand(CommandNames[0], args);
                         await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверно введен пароль, команда была отменена");
                     }
                 }
-                else if (CommandsList.ActivatedCommandsList.Contains(new ActivatedCommand($"Add UserName", args)))
+                else if (CommandsList.ContainsActivatedCommand("Add UserName", args))
                 {
                     if (args.Message.Text.Length < 2)
                     {
@@ -77,44 +78,59 @@ namespace Monopoly_tgbot
                         GamerList.Add(tempGamer);
                         File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList));
 
-                        CommandsList.ActivatedCommandsList.Remove(new ActivatedCommand($"Add UserName", args));
+                        CommandsList.RemoveCommand("Add UserName", args);
                     }
                     else
                     {
                         await Client.SendTextMessageAsync(args.Message.Chat.Id, "Должен быть только один символ, попробуйте еще раз");
                     }
                 }
+                CommandsList.SaveCommands();
             }
         }
         private async void MessageHandlerAsync(object sender, MessageEventArgs args)
         {
             if (sender is TelegramBotClient && args.Message.Text != null)
             {
-                AddText($"Попытка взаимодействия пользователя {args.Message.Chat.FirstName} {args.Message.Chat.LastName} ({args.Message.Chat.Id} - {args.Message.Chat.Username})");
+                var CommandsList = new Commands();
 
-                var GamerList = JsonConvert.DeserializeObject<List<Gamer>>(File.ReadAllText(usersPath));
-                if (IsPlayerExist(args.Message.Chat.Id, GamerList))
+                if (!CommandsList.ContainsActivatedCommand(args) && args.Message.Text[0] != '/')
                 {
-                    var Me = GetGamer(args.Message.Chat.Id, GamerList);
+                    AddText($"Попытка взаимодействия пользователя {args.Message.Chat.FirstName} {args.Message.Chat.LastName} ({args.Message.Chat.Id} - {args.Message.Chat.Username})");
 
-                    if (args.Message.Text[0] == '+' || args.Message.Text[0] == '-')
+                    var GamerList = JsonConvert.DeserializeObject<List<Gamer>>(File.ReadAllText(usersPath));
+                    if (IsPlayerExist(args.Message.Chat.Id, GamerList))
                     {
-                        Stonks(args.Message.Text, Me, args);
-                    }
-                    else if (IsSendMoneyRequest(args.Message.Text, GamerList))
-                    {
-                        SendMoneyRequest(args.Message.Text, Me, GamerList, args);
+                        var Me = GetGamer(args.Message.Chat.Id, GamerList);
+
+                        if (args.Message.Text[0] == '+' || args.Message.Text[0] == '-')
+                        {
+                            Stonks(args.Message.Text, Me, args);
+                        }
+                        else if (IsSendMoneyRequest(args.Message.Text, GamerList))
+                        {
+                            SendMoneyRequest(args.Message.Text, Me, GamerList, args);
+                        }
+                        else if (args.Message.Text == "Баланс")
+                        {
+                            await Client.SendTextMessageAsync(args.Message.Chat.Id, $"Ваш баланс: {Me.money}M", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
+                        }
+                        else if (args.Message.Text == "Вперед")
+                        {
+                            Me.PayMe(2);
+                            await Client.SendTextMessageAsync(args.Message.Chat.Id, $"Ваш баланс: {Me.money}M", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
+                        }
+                        else
+                        {
+                            await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
+                        }
                     }
                     else
                     {
-                        await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод", ParseMode.Default, false, false, 0,KeyboardConstructor.Keyboard());
+                        await Client.SendTextMessageAsync(args.Message.Chat.Id, "Ты не в игре лол", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                     }
+                    File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList));
                 }
-                else
-                {
-                    await Client.SendTextMessageAsync(args.Message.Chat.Id, "Ты не в игре лол", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
-                }
-                File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList));
             }
         }
         #region MessageHandler Funcs
