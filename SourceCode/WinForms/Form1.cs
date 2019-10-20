@@ -28,8 +28,9 @@ namespace Monopoly_tgbot
         {
             if (sender is TelegramBotClient && args.Message.Text != null)
             {
+                var GamerList = new List<Gamer>(); //временно
 
-                var Me = GetUser(args.Message.Chat.Id, UserList);
+                var Me = GetUser(args.Message.Chat.Id, GamerList);
 
                 if (args.Message.Text[0] == '+')
                 {
@@ -39,9 +40,9 @@ namespace Monopoly_tgbot
                 {
                     Stonks(args.Message.Text, Me, args);
                 }
-                else if (IsSendMoneyRequest(args.Message.Text, UserList))
+                else if (IsSendMoneyRequest(args.Message.Text, GamerList))
                 {
-                    SendMoneyRequest(args.Message.Text, Me, UserList, args);
+                    SendMoneyRequest(args.Message.Text, Me, GamerList, args);
                 }
                 else
                 {
@@ -50,7 +51,7 @@ namespace Monopoly_tgbot
             }
         }
         #region MessageHandler Funcs
-        static private async void Stonks (string text, User me, MessageEventArgs args)
+        static private async void Stonks (string text, Gamer me, MessageEventArgs args)
         {
             bool addMoney;
             if (text[0] == '+')
@@ -66,23 +67,23 @@ namespace Monopoly_tgbot
             {
                 float tempMoney = Convert.ToSingle(text);
                 if (addMoney)
-                    me.Money += tempMoney;
+                    me.money += tempMoney;
                 else if (!addMoney)
-                    me.Money -= tempMoney;
+                    me.money -= tempMoney;
             }
             catch (FormatException)
             {
                 await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод");
             }
         }
-        static private bool IsSendMoneyRequest (string text, List<User> list)
+        static private bool IsSendMoneyRequest (string text, List<Gamer> list)
         {
             for (int i = 0; i < list.Count(); i++)
-                if (list[i].UserName == text[0])
+                if (list[i].userName == text[0])
                     return true;
             return false;
         }
-        static private async void SendMoneyRequest (string text, User me, List<User> list, MessageEventArgs args)
+        static private async void SendMoneyRequest (string text, Gamer me, List<Gamer> list, MessageEventArgs args)
         {
             var user = GetUser(text[0], list);
             text.Remove(0, 1);
@@ -91,24 +92,24 @@ namespace Monopoly_tgbot
             try
             {
                 float tempMoney = Convert.ToSingle(text);
-                me.Money -= tempMoney;
-                user.Money += tempMoney;
+                me.money -= tempMoney;
+                user.money += tempMoney;
             }
             catch(FormatException)
             {
                 await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод");
             }
         }
-        static private User GetUser (char userName, List<User> list)
+        static private Gamer GetGamer (char userName, List<Gamer> list)
         {
             for (int i = 0; i < list.Count(); i++)
             {
-                if (list[i].UserName == userName)
+                if (list[i].userName == userName)
                     return list[i];
             }
             throw new ArgumentException("Сюда код не должен доходить, чини");
         }
-        static private User GetUser(long id, List<User> list)
+        static private Gamer GetUser(long id, List<Gamer> list)
         {
             for (int i = 0; i < list.Count(); i++)
             {
