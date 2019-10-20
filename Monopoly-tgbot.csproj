@@ -55,6 +55,7 @@
     <Compile Include="Gamer.cs" />
     <Compile Include="KeyboardConstructor.cs" />
     <Compile Include="Property.cs" />
+    <Compile Include="SourceCode\Commands.cs" />
     <Compile Include="SourceCode\WinForms\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
