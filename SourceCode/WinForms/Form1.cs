@@ -17,7 +17,7 @@ namespace Monopoly_tgbot
     public partial class Form1 : Form
     {
         public static TelegramBotClient Client;
-        public string path = "Files/";
+        public string usersPath = "Files/Users.json";
         const string token = "928805208:AAFqHquYSpuNQxCj7RORd7TzGyTXpsHm44E";       
         public Form1()
         {
@@ -156,7 +156,7 @@ namespace Monopoly_tgbot
             var tmp = new List<Gamer>();
             tmp.Add(new Gamer(200857582, 'И'));
             tmp.Add(new Gamer(274721450, 'А'));
-            File.WriteAllText(path + "Users.json", JsonConvert.SerializeObject(tmp));
+            File.WriteAllText(usersPath", JsonConvert.SerializeObject(tmp));
             Client.StartReceiving();
             StartStop.Text = "Stop";
             AddText("Bot started");
