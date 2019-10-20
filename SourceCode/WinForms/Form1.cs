@@ -14,7 +14,7 @@ namespace Monopoly_tgbot
 {
     public partial class Form1 : Form
     {
-        static TelegramBotClient Client;
+        public static TelegramBotClient Client;
         const string token = "928805208:AAFqHquYSpuNQxCj7RORd7TzGyTXpsHm44E";       
         public Form1()
         {
@@ -54,6 +54,7 @@ namespace Monopoly_tgbot
             StartStop.Text = "Stop";
             AddText("Bot started");
         }
+
         delegate void SetTextCallback(string text);
 
         private void AddText(string text)

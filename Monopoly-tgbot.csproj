@@ -52,6 +52,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gamer.cs" />
+    <Compile Include="Property.cs" />
     <Compile Include="SourceCode\WinForms\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
