@@ -73,9 +73,7 @@ namespace Monopoly_tgbot
                     if (args.Message.Text.Length < 2)
                     {
                         var GamerList = JsonConvert.DeserializeObject<List<Gamer>>(File.ReadAllText(usersPath));
-                        var tempGamer = new Gamer();
-                        tempGamer.SetUpGamer(args.Message.Chat.Id, args.Message.Text[0]);
-                        GamerList.Add(tempGamer);
+                        GamerList.Add(new Gamer(args.Message.Chat.Id, args.Message.Text[0]));
                         File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList));
 
                         CommandsList.RemoveCommand("Add UserName", args);
