@@ -23,7 +23,7 @@ namespace Monopoly_tgbot
         }
         public void PayTo(float amount,Gamer g = null)
         {
-            if (money >= amount)
+            if (money > amount)
             {
                 money -= amount;
                 if (g != null)
