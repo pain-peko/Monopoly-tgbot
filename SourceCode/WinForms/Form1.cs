@@ -9,12 +9,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Telegram.Bot;
 using Telegram.Bot.Args;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Monopoly_tgbot
 {
     public partial class Form1 : Form
     {
         public static TelegramBotClient Client;
+        public string path = "Files/";
         const string token = "928805208:AAFqHquYSpuNQxCj7RORd7TzGyTXpsHm44E";       
         public Form1()
         {
@@ -150,7 +153,10 @@ namespace Monopoly_tgbot
         }
         void Start()
         {
-            
+            var tmp = new List<Gamer>();
+            tmp.Add(new Gamer(200857582, 'И'));
+            tmp.Add(new Gamer(274721450, 'А'));
+            File.WriteAllText(path + "Users.json", JsonConvert.SerializeObject(tmp));
             Client.StartReceiving();
             StartStop.Text = "Stop";
             AddText("Bot started");

@@ -12,9 +12,15 @@ namespace Monopoly_tgbot
         public long ID;
         public char userName;
         public float money;
-        List<Property> properties;
+        public List<Property> properties;
         public string Money { get { return "Баланс: " + money.ToString("0.000"); } }
-
+        public Gamer(long id,char name)
+        {
+            ID = id;
+            userName = name;
+            money = 15;
+            properties = new List<Property>();
+        }
         public void PayTo(float amount,Gamer g = null)
         {
             if (money > amount)
