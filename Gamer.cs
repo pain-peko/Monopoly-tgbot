@@ -39,6 +39,22 @@ namespace Monopoly_tgbot
             money += amount;
         }
 
+        public void Buy(Property prop)
+        {
+            PayTo(prop.cost);
+            prop.owner = this;
+            properties.Add(prop);
+        }
+        public void PayRent(Property prop)
+        {
+            PayTo(prop.tiersCost[prop.Tier], prop.owner);
+        }
+
+        public void BuildHouse(Property prop)
+        {
+            PayTo(prop.HouseCost);
+            prop.Tier += 1;
+        }
         public async void NotEnoughMoney()
         {
             await Form1.Client.SendTextMessageAsync(ID, "Нужно больше золота");
