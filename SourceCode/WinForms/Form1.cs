@@ -18,7 +18,7 @@ namespace Monopoly_tgbot
     public partial class Form1 : Form
     {
         public static TelegramBotClient Client;
-        public string usersPath = "Files/Users.json";
+        public static string usersPath = "Files/Users.json";
         const string token = "928805208:AAFqHquYSpuNQxCj7RORd7TzGyTXpsHm44E";       
         public Form1()
         {

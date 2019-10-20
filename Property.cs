@@ -9,7 +9,7 @@ namespace Monopoly_tgbot
     [Serializable]
     public class Property
     {
-        public Gamer owner;
+        public long ownerID;
         public string name;
         public float cost;
         public string tag;

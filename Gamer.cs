@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Monopoly_tgbot
 {
@@ -42,12 +43,12 @@ namespace Monopoly_tgbot
         public void Buy(Property prop)
         {
             PayTo(prop.cost);
-            prop.owner = this;
+            prop.ownerID = ID;
             properties.Add(prop);
         }
         public void PayRent(Property prop)
         {
-            PayTo(prop.tiersCost[prop.Tier], prop.owner);
+            PayTo(prop.tiersCost[prop.Tier], GetGamerByID(prop.ownerID));
         }
 
         public void BuildHouse(Property prop)
@@ -58,6 +59,12 @@ namespace Monopoly_tgbot
         public async void NotEnoughMoney()
         {
             await Form1.Client.SendTextMessageAsync(ID, "Нужно больше золота");
+        }
+
+        public static Gamer GetGamerByID(long ID)
+        {
+            List<Gamer> tmp = JsonConvert.DeserializeObject<List<Gamer>>(Form1.usersPath);
+            return tmp.Find(item => item.ID == ID);
         }
     }
 }
