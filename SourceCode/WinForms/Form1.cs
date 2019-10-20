@@ -15,14 +15,12 @@ namespace Monopoly_tgbot
     public partial class Form1 : Form
     {
         static TelegramBotClient Client;
-        const string token = "928805208:AAFqHquYSpuNQxCj7RORd7TzGyTXpsHm44E";
-        bool Reciving;        
+        const string token = "928805208:AAFqHquYSpuNQxCj7RORd7TzGyTXpsHm44E";       
         public Form1()
         {
             InitializeComponent();
             Client = new TelegramBotClient(token);
             Client.OnMessage += MessageHandlerAsync;
-            Reciving = false;
         }
 
 
@@ -37,11 +35,10 @@ namespace Monopoly_tgbot
         //Button click handle
         private void StartStop_Click(object sender, EventArgs e)
         {
-            if (Reciving)
+            if (Client.IsReceiving)
                 Stop();
             else
                 Start();
-            Reciving ^= true;
         }
 
         void Stop()
