@@ -24,14 +24,16 @@ namespace Monopoly_tgbot
         }
 
 
-        static private async void MessageHandlerAsync(object sender, MessageEventArgs args)
+        private async void MessageHandlerAsync(object sender, MessageEventArgs args)
         {
             if (sender is TelegramBotClient && args.Message.Text != null)
             {
+                AddText($"Попытка взаимодействия пользователя {args.Message.Chat.FirstName} {args.Message.Chat.LastName} ({args.Message.Chat.Id} - {args.Message.Chat.Username})");
+
                 var GamerList = new List<Gamer>(); //временно
                 if (IsPlayerExist(args.Message.Chat.Id, GamerList))
                 {
-                    var Me = GetUser(args.Message.Chat.Id, GamerList);
+                    var Me = GetGamer(args.Message.Chat.Id, GamerList);
 
                     if (args.Message.Text[0] == '+')
                     {
@@ -57,7 +59,7 @@ namespace Monopoly_tgbot
             }
         }
         #region MessageHandler Funcs
-        static private async void Stonks (string text, Gamer me, MessageEventArgs args)
+        private async void Stonks (string text, Gamer me, MessageEventArgs args)
         {
             bool addMoney;
             if (text[0] == '+')
@@ -82,23 +84,23 @@ namespace Monopoly_tgbot
                 await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод");
             }
         }
-        static private bool IsSendMoneyRequest (string text, List<Gamer> list)
+        private bool IsSendMoneyRequest (string text, List<Gamer> list)
         {
             for (int i = 0; i < list.Count(); i++)
                 if (list[i].userName == text[0])
                     return true;
             return false;
         }
-        static private bool IsPlayerExist (long id, List<Gamer> list)
+        private bool IsPlayerExist (long id, List<Gamer> list)
         {
             for (int i = 0; i < list.Count(); i++)
                 if (list[i].ID == id)
                     return true;
             return false;
         }
-        static private async void SendMoneyRequest (string text, Gamer me, List<Gamer> list, MessageEventArgs args)
+        private async void SendMoneyRequest (string text, Gamer me, List<Gamer> list, MessageEventArgs args)
         {
-            var user = GetUser(text[0], list);
+            var user = GetGamer(text[0], list);
             text.Remove(0, 1);
             if (text[0] == ' ')
                 text.Remove(0, 1);
@@ -112,7 +114,7 @@ namespace Monopoly_tgbot
                 await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод");
             }
         }
-        static private Gamer GetGamer (char userName, List<Gamer> list)
+        private Gamer GetGamer (char userName, List<Gamer> list)
         {
             for (int i = 0; i < list.Count(); i++)
             {
@@ -121,7 +123,7 @@ namespace Monopoly_tgbot
             }
             throw new ArgumentException("Сюда код не должен доходить, чини");
         }
-        static private Gamer GetGamer(long id, List<Gamer> list)
+        private Gamer GetGamer(long id, List<Gamer> list)
         {
             for (int i = 0; i < list.Count(); i++)
             {
@@ -129,6 +131,10 @@ namespace Monopoly_tgbot
                     return list[i];
             }
             throw new ArgumentException("Сюда код не должен доходить, чини");
+        }
+        private void AddLog ()
+        {
+            
         }
         #endregion
 
