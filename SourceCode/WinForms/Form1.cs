@@ -45,12 +45,28 @@ namespace Monopoly_tgbot
         { 
             Client.StopReceiving();
             StartStop.Text = "Start";
+            AddText("Bot stopped");
         }
         void Start()
         {
             
             Client.StartReceiving();
             StartStop.Text = "Stop";
+            AddText("Bot started");
+        }
+        delegate void SetTextCallback(string text);
+
+        private void AddText(string text)
+        {
+            if (this.Log.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(AddText);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                this.Log.Text += text+"\n";
+            }
         }
     }
 }
