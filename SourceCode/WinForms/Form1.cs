@@ -67,9 +67,9 @@ namespace Monopoly_tgbot
             {
                 float tempMoney = Convert.ToSingle(text);
                 if (addMoney)
-                    me.money += tempMoney;
+                    me.PayMe(tempMoney);
                 else if (!addMoney)
-                    me.money -= tempMoney;
+                    me.PayTo(tempMoney);
             }
             catch (FormatException)
             {
@@ -92,8 +92,7 @@ namespace Monopoly_tgbot
             try
             {
                 float tempMoney = Convert.ToSingle(text);
-                me.money -= tempMoney;
-                user.money += tempMoney;
+                me.PayTo(tempMoney, user);
             }
             catch(FormatException)
             {
