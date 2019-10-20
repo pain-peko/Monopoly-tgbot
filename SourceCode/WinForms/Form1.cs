@@ -121,7 +121,7 @@ namespace Monopoly_tgbot
             }
             throw new ArgumentException("Сюда код не должен доходить, чини");
         }
-        static private Gamer GetUser(long id, List<Gamer> list)
+        static private Gamer GetGamer(long id, List<Gamer> list)
         {
             for (int i = 0; i < list.Count(); i++)
             {
