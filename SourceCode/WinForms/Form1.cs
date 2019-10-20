@@ -35,11 +35,7 @@ namespace Monopoly_tgbot
                 {
                     var Me = GetGamer(args.Message.Chat.Id, GamerList);
 
-                    if (args.Message.Text[0] == '+')
-                    {
-                        Stonks(args.Message.Text, Me, args);
-                    }
-                    else if (args.Message.Text[0] == '-')
+                    if (args.Message.Text[0] == '+' || args.Message.Text[0] == '-')
                     {
                         Stonks(args.Message.Text, Me, args);
                     }
