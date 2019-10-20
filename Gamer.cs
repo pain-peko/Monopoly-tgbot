@@ -14,7 +14,8 @@ namespace Monopoly_tgbot
         public char userName;
         public float money;
         public List<Property> properties;
-        public Gamer(long id,char name)
+        public Gamer() { }
+        public Gamer (long id,char name)
         {
             ID = id;
             userName = name;
@@ -65,6 +66,5 @@ namespace Monopoly_tgbot
             List<Gamer> tmp = JsonConvert.DeserializeObject<List<Gamer>>(Form1.usersPath);
             return tmp.Find(item => item.ID == ID);
         }
-        public Gamer() { }
     }
 }
