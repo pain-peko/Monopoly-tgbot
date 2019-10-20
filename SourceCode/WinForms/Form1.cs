@@ -20,7 +20,7 @@ namespace Monopoly_tgbot
         public static TelegramBotClient Client;
 
 
-        public  static string usersPath = "Files/Users.json";
+        public string usersPath = "Files/Users.json";
 
         public const string SecretPassword = "Альфа Влад";
 
