@@ -11,6 +11,7 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Newtonsoft.Json;
 using System.IO;
+using Telegram.Bot.Types.Enums;
 
 namespace Monopoly_tgbot
 {
@@ -48,12 +49,12 @@ namespace Monopoly_tgbot
                     }
                     else
                     {
-                        await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод");
+                        await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод", ParseMode.Default, false, false, 0,KeyboardConstructor.Keyboard());
                     }
                 }
                 else
                 {
-                    await Client.SendTextMessageAsync(args.Message.Chat.Id, "Ты не в игре лол");
+                    await Client.SendTextMessageAsync(args.Message.Chat.Id, "Ты не в игре лол", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                 }
             }
         }
@@ -80,7 +81,7 @@ namespace Monopoly_tgbot
             }
             catch (FormatException)
             {
-                await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод");
+                await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
             }
         }
         private bool IsSendMoneyRequest (string text, List<Gamer> list)
@@ -110,7 +111,7 @@ namespace Monopoly_tgbot
             }
             catch(FormatException)
             {
-                await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод");
+                await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
             }
         }
         private Gamer GetGamer (char userName, List<Gamer> list)
