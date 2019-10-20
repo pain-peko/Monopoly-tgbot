@@ -156,7 +156,7 @@ namespace Monopoly_tgbot
             var tmp = new List<Gamer>();
             tmp.Add(new Gamer(200857582, 'И'));
             tmp.Add(new Gamer(274721450, 'А'));
-            File.WriteAllText(usersPath", JsonConvert.SerializeObject(tmp));
+            File.WriteAllText("usersPath", JsonConvert.SerializeObject(tmp));
             Client.StartReceiving();
             StartStop.Text = "Stop";
             AddText("Bot started");
