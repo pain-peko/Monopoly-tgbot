@@ -128,10 +128,6 @@ namespace Monopoly_tgbot
             }
             throw new ArgumentException("Сюда код не должен доходить, чини");
         }
-        private void AddLog ()
-        {
-            
-        }
         #endregion
 
 
