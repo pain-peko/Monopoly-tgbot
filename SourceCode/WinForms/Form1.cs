@@ -29,24 +29,30 @@ namespace Monopoly_tgbot
             if (sender is TelegramBotClient && args.Message.Text != null)
             {
                 var GamerList = new List<Gamer>(); //временно
+                if (IsPlayerExist(args.Message.Chat.Id, GamerList))
+                {
+                    var Me = GetUser(args.Message.Chat.Id, GamerList);
 
-                var Me = GetUser(args.Message.Chat.Id, GamerList);
-
-                if (args.Message.Text[0] == '+')
-                {
-                    Stonks(args.Message.Text, Me, args);
-                }
-                else if (args.Message.Text[0] == '-')
-                {
-                    Stonks(args.Message.Text, Me, args);
-                }
-                else if (IsSendMoneyRequest(args.Message.Text, GamerList))
-                {
-                    SendMoneyRequest(args.Message.Text, Me, GamerList, args);
+                    if (args.Message.Text[0] == '+')
+                    {
+                        Stonks(args.Message.Text, Me, args);
+                    }
+                    else if (args.Message.Text[0] == '-')
+                    {
+                        Stonks(args.Message.Text, Me, args);
+                    }
+                    else if (IsSendMoneyRequest(args.Message.Text, GamerList))
+                    {
+                        SendMoneyRequest(args.Message.Text, Me, GamerList, args);
+                    }
+                    else
+                    {
+                        await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод");
+                    }
                 }
                 else
                 {
-                    await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод");
+                    await Client.SendTextMessageAsync(args.Message.Chat.Id, "Ты не в игре лол");
                 }
             }
         }
@@ -80,6 +86,13 @@ namespace Monopoly_tgbot
         {
             for (int i = 0; i < list.Count(); i++)
                 if (list[i].userName == text[0])
+                    return true;
+            return false;
+        }
+        static private bool IsPlayerExist (long id, List<Gamer> list)
+        {
+            for (int i = 0; i < list.Count(); i++)
+                if (list[i].ID == id)
                     return true;
             return false;
         }
