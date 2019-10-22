@@ -46,9 +46,9 @@ namespace Monopoly_tgbot
             prop.ownerID = ID;
             properties.Add(prop);
         }
-        public void PayRent(Property prop)
+        public void PayRent(Property prop, List<Gamer> list)
         {
-            PayTo(prop.tiersCost[prop.Tier], GetGamerByID(prop.ownerID));
+            PayTo(prop.tiersCost[prop.Tier],list.Find(item => item.ID == ID));
         }
         public void BuildHouse(Property prop)
         {

@@ -131,7 +131,7 @@ namespace Monopoly_tgbot
                         else if (IsPayRentOrBuyCityRequest(args.Message.Text))
                         {
                             if (IsPayRentRequest(args.Message.Text, GamerList))
-                                Me.PayRent(GetPayRentProp(args.Message.Text, GamerList));
+                                Me.PayRent(GetPayRentProp(args.Message.Text, GamerList),GamerList);
                             else
                                 Me.Buy(new Property(args.Message.Text));
                         }
