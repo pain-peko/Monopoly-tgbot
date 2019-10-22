@@ -39,7 +39,6 @@ namespace Monopoly_tgbot
         {
             money += amount;
         }
-
         public void Buy(Property prop)
         {
             PayTo(prop.cost);
@@ -71,7 +70,6 @@ namespace Monopoly_tgbot
                 prop.Tier -= 1;
             }
         }
-
         public void SendPropertyTo(Property prop, Gamer gamer)
         {
             if (prop.ownerID == ID)
@@ -81,12 +79,15 @@ namespace Monopoly_tgbot
                 gamer.properties.Add(prop);
             }
         }
-        
         public async void NotEnoughMoney()
         {
             await Form1.Client.SendTextMessageAsync(ID, "Нужно больше золота");
         }
-
+        public void Reset()
+        {
+            money = 15f;
+            properties = new List<Property>();
+        }
         public static Gamer GetGamerByID(long ID)
         {
             List<Gamer> tmp = JsonConvert.DeserializeObject<List<Gamer>>(Form1.usersPath);

@@ -357,5 +357,16 @@ namespace Monopoly_tgbot
                 this.Log.Text += text+"\n";
             }
         }
+
+        private void Reset_Click(object sender, EventArgs e)
+        {
+            var list = JsonConvert.DeserializeObject<List<Gamer>>(File.ReadAllText(usersPath));
+            foreach (Gamer g in list)
+            {
+                g.Reset();
+            }
+            File.WriteAllText(usersPath,JsonConvert.SerializeObject(list));
+            AddText("All users have been reseted");
+        }
     }
 }
