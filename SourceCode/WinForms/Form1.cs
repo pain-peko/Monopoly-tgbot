@@ -128,6 +128,13 @@ namespace Monopoly_tgbot
                                     Me.DemolishHouse(Me.properties.Find(item => item.name == cities[i]));
                             }
                         }
+                        else if (IsPayRentOrBuyCityRequest(args.Message.Text))
+                        {
+                            if (IsPayRentRequest(args.Message.Text, GamerList))
+                                Me.PayRent();
+                            else
+                                Me.Buy(new Property(args.Message.Text));
+                        }
                         else if (args.Message.Text == "Баланс")
                         {
                             await Client.SendTextMessageAsync(args.Message.Chat.Id, $"Ваш баланс: {Me.money}M", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
@@ -313,6 +320,31 @@ namespace Monopoly_tgbot
                 }
             }
             return goodRequests.ToArray();
+        }
+
+
+        private bool IsPayRentOrBuyCityRequest(string text)
+        {
+            List<PropSave> allProps = new List<PropSave>();
+            allProps = JsonConvert.DeserializeObject<List<PropSave>>(File.ReadAllText("Files/Props.json"));
+            for (int i = 0; i < allProps.Count; i++)
+            {
+                if (allProps[i].name == text)
+                    return true;
+            }
+            return false;
+        }
+        private bool IsPayRentRequest (string text, List<Gamer> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                for (int j = 0; j < list[i].properties.Count; j++)
+                {
+                    if (list[i].properties[j].name == text)
+                        return true;
+                }
+            }
+            return false;
         }
 
 
