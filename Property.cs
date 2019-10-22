@@ -64,4 +64,13 @@ namespace Monopoly_tgbot
         }
 
     }
+    [Serializable]
+    public class PropSave
+    {
+        public string name;
+        public float cost;
+        public string tag;
+        public float[] tiersCost;
+    }
+
 }

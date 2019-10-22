@@ -50,12 +50,38 @@ namespace Monopoly_tgbot
         {
             PayTo(prop.tiersCost[prop.Tier], GetGamerByID(prop.ownerID));
         }
-
         public void BuildHouse(Property prop)
         {
-            PayTo(prop.HouseCost);
-            prop.Tier += 1;
+            if (prop.tag == "Transport" || prop.tag == "Electricity")
+            {
+                return;
+            }
+            if (prop.ownerID == ID)
+            {
+                PayTo(prop.HouseCost);
+                prop.Tier += 1;
+            }
         }
+        public void DemolishHouse(Property prop)
+        {
+
+            if (prop.Tier > 0 && prop.ownerID == ID)
+            {
+                PayMe(prop.HouseCost / 2f);
+                prop.Tier -= 1;
+            }
+        }
+
+        public void SendPropertyTo(Property prop, Gamer gamer)
+        {
+            if (prop.ownerID == ID)
+            {
+                properties.Remove(prop);
+                prop.ownerID = gamer.ID;
+                gamer.properties.Add(prop);
+            }
+        }
+        
         public async void NotEnoughMoney()
         {
             await Form1.Client.SendTextMessageAsync(ID, "Нужно больше золота");
