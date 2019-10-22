@@ -48,7 +48,7 @@ namespace Monopoly_tgbot
         }
         public void PayRent(Property prop, List<Gamer> list)
         {
-            PayTo(prop.tiersCost[prop.Tier],list.Find(item => item.ID == ID));
+            PayTo(prop.tiersCost[prop.Tier],list.Find(item => item.ID == prop.ownerID));
         }
         public void BuildHouse(Property prop)
         {
