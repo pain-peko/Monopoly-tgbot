@@ -114,11 +114,19 @@ namespace Monopoly_tgbot
                             var tempGamer = FindGamer(args.Message.Text[0], GamerList);
                             Me.SendPropertyTo(GetProperty(args.Message.Text, tempGamer), tempGamer);
                         }
-                        else if (IsAddHouseRequest(args.Message.Text, Me, args))
+                        else if (IsHouseRequest(args.Message.Text, Me, args))
                         {
                             string[] cities = GetGoodRequest(GetBuildHouseRequest(args.Message.Text), Me);
-                            for (int i = 0; i < cities.Length; i++)
-                                Me.BuildHouse(Me.properties.Find(item => item.name == cities[i]));
+                            if (args.Message.Text[0] == '+')
+                            {
+                                for (int i = 0; i < cities.Length; i++)
+                                    Me.BuildHouse(Me.properties.Find(item => item.name == cities[i]));
+                            }
+                            else
+                            {
+                                for (int i = 0; i < cities.Length; i++)
+                                    Me.DemolishHouse(Me.properties.Find(item => item.name == cities[i]));
+                            }
                         }
                         else if (IsPayRentOrBuyCityRequest(args.Message.Text))
                         {
@@ -258,10 +266,10 @@ namespace Monopoly_tgbot
             throw new ArgumentException("Сюда код не должен доходить");
         }
 
-        //Сделать case sensetive white symbol sensetive
-        private bool IsAddHouseRequest(string text, Gamer me, MessageEventArgs args)
+
+        private bool IsHouseRequest(string text, Gamer me, MessageEventArgs args)
         {
-            if (text[0] != '+' && text[1] != ' ' && text.Length > 2)
+            if (((text[0] != '+'|| text[0] != '-') && text[1] != ' ') || text.Length < 3)
                 return false;
             string[] cities = GetBuildHouseRequest(text);
 
