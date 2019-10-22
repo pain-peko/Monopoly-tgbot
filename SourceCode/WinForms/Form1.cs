@@ -105,11 +105,6 @@ namespace Monopoly_tgbot
                         {
                             SendMoneyRequest(args.Message.Text, Me, GamerList, args);
                         }
-                        else if(IsSendPropertyRequest(args.Message.Text, GamerList))
-                        {
-                            var tempGamer = FindGamer(args.Message.Text[0], GamerList);
-                            Me.SendPropertyTo(GetProperty(args.Message.Text, tempGamer), tempGamer);
-                        }
                         else if (IsHouseRequest(args.Message.Text, Me, args))
                         {
                             string[] cities = GetGoodRequest(GetBuildHouseRequest(args.Message.Text), Me);
@@ -130,6 +125,11 @@ namespace Monopoly_tgbot
                                 Me.PayRent(GetPayRentProp(args.Message.Text, GamerList),GamerList);
                             else
                                 Me.Buy(new Property(args.Message.Text));
+                        }
+                        else if (IsSendPropertyRequest(args.Message.Text, Me))
+                        {
+                            var tempGamer = FindGamer(args.Message.Text[0], GamerList);
+                            Me.SendPropertyTo(GetProperty(args.Message.Text, Me), tempGamer);
                         }
                         else if(args.Message.Text[0] == '+' || args.Message.Text[0] == '-')
                         {
@@ -224,24 +224,19 @@ namespace Monopoly_tgbot
         }
 
 
-        private bool IsSendPropertyRequest(string text, List<Gamer> list)
+        private bool IsSendPropertyRequest(string text, Gamer me)
         {
-            try
-            {
-                var tempGamer = FindGamer(text[0], list);
-                text = text.Remove(0, 1);
-                text = text.Trim();
-                for (int i = 0; i < tempGamer.properties.Count(); i++)
-                {
-                    if (text == tempGamer.properties[i].name)
-                        return true;
-                }
+            if (text.Length < 3)
                 return false;
-            }
-            catch (ArgumentException)
+
+            text = text.Remove(0, 1);
+            text = text.Trim();
+            for (int i = 0; i < me.properties.Count(); i++)
             {
-                return false;
+                if (text == me.properties[i].name)
+                    return true;
             }
+            return false;
         }
         private Gamer FindGamer(char userName, List<Gamer> list)
         {
@@ -250,14 +245,14 @@ namespace Monopoly_tgbot
                     return list[i];
             throw new ArgumentException("Игрока не существует");
         }
-        private Property GetProperty(string text, Gamer gamer)
+        private Property GetProperty(string text, Gamer me)
         {
             text = text.Remove(0, 1);
             text = text.Trim();
-            for (int i = 0; i < gamer.properties.Count(); i++)
+            for (int i = 0; i < me.properties.Count(); i++)
             {
-                if (text == gamer.properties[i].name)
-                    return gamer.properties[i];
+                if (text == me.properties[i].name)
+                    return me.properties[i];
             }
             throw new ArgumentException("Сюда код не должен доходить");
         }
@@ -265,7 +260,7 @@ namespace Monopoly_tgbot
 
         private bool IsHouseRequest(string text, Gamer me, MessageEventArgs args)
         {
-            if (text.Length < 2 || ((text[0] != '+'|| text[0] != '-') && text[1] != ' ') || text.Length < 3)
+            if (text.Length < 2 || ((text[0] != '+' && text[0] != '-') || text[1] != ' ') || text.Length < 3)
                 return false;
             string[] cities = GetBuildHouseRequest(text);
 
@@ -285,7 +280,7 @@ namespace Monopoly_tgbot
                 if (!goodRequest)
                     errorRequests += cities[i] + ", ";
             }
-            if (errorRequests != "")
+            if (errorRequests != "" && yep)
                 Client.SendTextMessageAsync(args.Message.Chat.Id, $"Это запрос неверен: {errorRequests}");
             if (yep)
                 return true;
