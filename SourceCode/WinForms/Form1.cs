@@ -74,7 +74,7 @@ namespace Monopoly_tgbot
                     {
                         var GamerList = JsonConvert.DeserializeObject<List<Gamer>>(File.ReadAllText(usersPath));
                         GamerList.Add(new Gamer(args.Message.Chat.Id, args.Message.Text[0]));
-                        File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList));
+                        File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList, Formatting.Indented));
 
                         CommandsList.RemoveCommand("Add UserName", args);
                     }
@@ -153,7 +153,7 @@ namespace Monopoly_tgbot
                     {
                         await Client.SendTextMessageAsync(args.Message.Chat.Id, "Ты не в игре лол", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                     }
-                    File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList));
+                    File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList, Formatting.Indented));
                 }
             }
         }
@@ -417,7 +417,7 @@ namespace Monopoly_tgbot
             {
                 g.Reset();
             }
-            File.WriteAllText(usersPath,JsonConvert.SerializeObject(list));
+            File.WriteAllText(usersPath,JsonConvert.SerializeObject(list, Formatting.Indented));
             AddText("All users have been reseted");
         }
     }

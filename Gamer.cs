@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -90,7 +91,7 @@ namespace Monopoly_tgbot
         }
         public static Gamer GetGamerByID(long ID)
         {
-            List<Gamer> tmp = JsonConvert.DeserializeObject<List<Gamer>>(Form1.usersPath);
+            var tmp = JsonConvert.DeserializeObject<List<Gamer>>(File.ReadAllText(Form1.usersPath));
             return tmp.Find(item => item.ID == ID);
         }
     }
