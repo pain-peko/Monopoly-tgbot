@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,7 +64,18 @@ namespace Monopoly_tgbot
                 }
             }
         }
-
+        public Property() { }
+        public Property(string propName)
+        {
+            List<PropSave> allProps = new List<PropSave>();
+            allProps = JsonConvert.DeserializeObject<List<PropSave>>(File.ReadAllText("Files/Props.json"));
+            var ps = allProps.Find(item => item.name == propName);
+            name = ps.name;
+            cost = ps.cost;
+            tag = ps.tag;
+            tiersCost = ps.tiersCost;
+            Tier = 0;
+        }
     }
     [Serializable]
     public class PropSave
