@@ -269,7 +269,7 @@ namespace Monopoly_tgbot
 
         private bool IsHouseRequest(string text, Gamer me, MessageEventArgs args)
         {
-            if (((text[0] != '+'|| text[0] != '-') && text[1] != ' ') || text.Length < 3)
+            if (text.Length < 2 || ((text[0] != '+'|| text[0] != '-') && text[1] != ' ') || text.Length < 3)
                 return false;
             string[] cities = GetBuildHouseRequest(text);
 
