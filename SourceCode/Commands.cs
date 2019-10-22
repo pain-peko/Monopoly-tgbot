@@ -55,7 +55,7 @@ namespace Monopoly_tgbot
         }
         public void SaveCommands()
         {
-            File.WriteAllText(FilePath, JsonConvert.SerializeObject(ActivatedCommandsList));
+            File.WriteAllText(FilePath, JsonConvert.SerializeObject(ActivatedCommandsList, Formatting.Indented));
         }
 
         public bool ContainsActivatedCommand (string name, MessageEventArgs args)

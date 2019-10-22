@@ -74,7 +74,7 @@ namespace Monopoly_tgbot
                     {
                         var GamerList = JsonConvert.DeserializeObject<List<Gamer>>(File.ReadAllText(usersPath));
                         GamerList.Add(new Gamer(args.Message.Chat.Id, args.Message.Text[0]));
-                        File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList));
+                        File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList,Formatting.Indented));
 
                         CommandsList.RemoveCommand("Add UserName", args);
                     }
@@ -101,33 +101,55 @@ namespace Monopoly_tgbot
                     {
                         var Me = GetGamer(args.Message.Chat.Id, GamerList);
 
-                        if (args.Message.Text[0] == '+' || args.Message.Text[0] == '-')
-                        {
-                            Stonks(args.Message.Text, Me, args);
-                        }
-                        else if (IsSendMoneyRequest(args.Message.Text, GamerList))
+                        if (IsSendMoneyRequest(args.Message.Text, GamerList))
                         {
                             SendMoneyRequest(args.Message.Text, Me, GamerList, args);
                         }
-                        else if (args.Message.Text == "Баланс")
+                        else if (IsHouseRequest(args.Message.Text, Me, args))
                         {
-                            await Client.SendTextMessageAsync(args.Message.Chat.Id, $"Ваш баланс: {Me.money}M", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
+                            string[] cities = GetGoodRequest(GetBuildHouseRequest(args.Message.Text), Me);
+                            if (args.Message.Text[0] == '+')
+                            {
+                                for (int i = 0; i < cities.Length; i++)
+                                    Me.BuildHouse(Me.properties.Find(item => item.name == cities[i]));
+                            }
+                            else
+                            {
+                                for (int i = 0; i < cities.Length; i++)
+                                    Me.DemolishHouse(Me.properties.Find(item => item.name == cities[i]));
+                            }
+                        }
+                        else if (IsPayRentOrBuyCityRequest(args.Message.Text))
+                        {
+                            if (IsPayRentRequest(args.Message.Text, GamerList))
+                                Me.PayRent(GetPayRentProp(args.Message.Text, GamerList),GamerList);
+                            else
+                                Me.Buy(new Property(args.Message.Text));
+                        }
+                        else if (IsSendPropertyRequest(args.Message.Text, Me))
+                        {
+                            var tempGamer = FindGamer(args.Message.Text[0], GamerList);
+                            Me.SendPropertyTo(GetProperty(args.Message.Text, Me), tempGamer);
+                        }
+                        else if(args.Message.Text[0] == '+' || args.Message.Text[0] == '-')
+                        {
+                            Stonks(args.Message.Text, Me, args);
                         }
                         else if (args.Message.Text == "Вперед")
                         {
                             Me.PayMe(2);
-                            await Client.SendTextMessageAsync(args.Message.Chat.Id, $"Ваш баланс: {Me.money}M", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                         }
                         else
                         {
                             await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                         }
+                        await Client.SendTextMessageAsync(args.Message.Chat.Id, $"Ваш баланс: {Me.money.ToString("0.000")}M", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                     }
                     else
                     {
                         await Client.SendTextMessageAsync(args.Message.Chat.Id, "Ты не в игре лол", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                     }
-                    File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList));
+                    File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList,Formatting.Indented));
                 }
             }
         }
@@ -155,21 +177,28 @@ namespace Monopoly_tgbot
                 await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
             }
         }
+
+
         private bool IsSendMoneyRequest (string text, List<Gamer> list)
         {
-            for (int i = 0; i < list.Count(); i++)
-                if (list[i].userName == text[0])
-                    return true;
-            return false;
+            try
+            {
+                var tempGamer = FindGamer(text[0], list);
+                text = text.Remove(0, 1);
+                text = text.Trim();
+                float tempMoney = Convert.ToSingle(text);
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
         }
-        private bool IsPlayerExist (long id, List<Gamer> list)
-        {
-            for (int i = 0; i < list.Count(); i++)
-                if (list[i].ID == id)
-                    return true;
-            return false;
-        }
-        private async void SendMoneyRequest (string text, Gamer me, List<Gamer> list, MessageEventArgs args)
+        private async void SendMoneyRequest(string text, Gamer me, List<Gamer> list, MessageEventArgs args)
         {
             var user = GetGamer(text[0], list);
             text = text.Remove(0, 1);
@@ -179,11 +208,149 @@ namespace Monopoly_tgbot
                 float tempMoney = Convert.ToSingle(text);
                 me.PayTo(tempMoney, user);
             }
-            catch(FormatException)
+            catch (FormatException)
             {
                 await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
             }
         }
+
+
+        private bool IsPlayerExist (long id, List<Gamer> list)
+        {
+            for (int i = 0; i < list.Count(); i++)
+                if (list[i].ID == id)
+                    return true;
+            return false;
+        }
+
+
+        private bool IsSendPropertyRequest(string text, Gamer me)
+        {
+            if (text.Length < 3)
+                return false;
+
+            text = text.Remove(0, 1);
+            text = text.Trim();
+            for (int i = 0; i < me.properties.Count(); i++)
+            {
+                if (text == me.properties[i].name)
+                    return true;
+            }
+            return false;
+        }
+        private Gamer FindGamer(char userName, List<Gamer> list)
+        {
+            for (int i = 0; i < list.Count(); i++)
+                if (list[i].userName == userName)
+                    return list[i];
+            throw new ArgumentException("Игрока не существует");
+        }
+        private Property GetProperty(string text, Gamer me)
+        {
+            text = text.Remove(0, 1);
+            text = text.Trim();
+            for (int i = 0; i < me.properties.Count(); i++)
+            {
+                if (text == me.properties[i].name)
+                    return me.properties[i];
+            }
+            throw new ArgumentException("Сюда код не должен доходить");
+        }
+
+
+        private bool IsHouseRequest(string text, Gamer me, MessageEventArgs args)
+        {
+            if (text.Length < 2 || ((text[0] != '+' && text[0] != '-') || text[1] != ' ') || text.Length < 3)
+                return false;
+            string[] cities = GetBuildHouseRequest(text);
+
+            string errorRequests = "";
+            bool yep = false;
+            for (int i = 0; i < cities.Length; i++)
+            {
+                bool goodRequest = false;
+                for (int j = 0; j < me.properties.Count(); j++)
+                { 
+                    if (me.properties[j].name == cities[i])
+                    {
+                        yep = true;
+                        goodRequest = true;
+                    }
+                }
+                if (!goodRequest)
+                    errorRequests += cities[i] + ", ";
+            }
+            if (errorRequests != "" && yep)
+                Client.SendTextMessageAsync(args.Message.Chat.Id, $"Это запрос неверен: {errorRequests}");
+            if (yep)
+                return true;
+            else
+                return false;
+        }
+        private string[] GetBuildHouseRequest(string text)
+        {
+            text = text.Remove(0, 2);
+
+            char[] separator = new char[2];
+            separator[0] = ',';
+            separator[1] = ' ';
+
+            return text.Split(separator);
+        }
+        private string[] GetGoodRequest (string[] request, Gamer me)
+        {
+            List<string> goodRequests = new List<string>();
+            for (int i = 0; i < request.Length; i++)
+            {
+                for (int j = 0; j < me.properties.Count(); j++)
+                {
+                    if (me.properties[j].name == request[i])
+                    {
+                        goodRequests.Add(request[i]);
+                    }
+                }
+            }
+            return goodRequests.ToArray();
+        }
+
+
+        private bool IsPayRentOrBuyCityRequest(string text)
+        {
+            List<PropSave> allProps = new List<PropSave>();
+            allProps = JsonConvert.DeserializeObject<List<PropSave>>(File.ReadAllText("Files/Props.json"));
+            for (int i = 0; i < allProps.Count; i++)
+            {
+                if (allProps[i].name == text)
+                    return true;
+            }
+            return false;
+        }
+        private bool IsPayRentRequest(string text, List<Gamer> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                for (int j = 0; j < list[i].properties.Count; j++)
+                {
+                    if (list[i].properties[j].name == text)
+                        return true;
+                }
+            }
+            return false;
+        }
+        private Property GetPayRentProp(string text, List<Gamer> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                for (int j = 0; j < list[i].properties.Count; j++)
+                {
+                    if (list[i].properties[j].name == text)
+                        return list[i].properties[j];
+                }
+            }
+            throw new ArgumentException("лол, как сюда код дошел");
+        }
+
+
         private Gamer GetGamer (char userName, List<Gamer> list)
         {
             return list.Find(item => item.userName == userName);
@@ -232,6 +399,17 @@ namespace Monopoly_tgbot
             {
                 this.Log.Text += text+"\n";
             }
+        }
+
+        private void Reset_Click(object sender, EventArgs e)
+        {
+            var list = JsonConvert.DeserializeObject<List<Gamer>>(File.ReadAllText(usersPath));
+            foreach (Gamer g in list)
+            {
+                g.Reset();
+            }
+            File.WriteAllText(usersPath,JsonConvert.SerializeObject(list,Formatting.Indented));
+            AddText("All users have been reseted");
         }
     }
 }

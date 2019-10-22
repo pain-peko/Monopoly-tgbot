@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,31 +40,58 @@ namespace Monopoly_tgbot
         {
             money += amount;
         }
-
         public void Buy(Property prop)
         {
             PayTo(prop.cost);
             prop.ownerID = ID;
             properties.Add(prop);
         }
-        public void PayRent(Property prop)
+        public void PayRent(Property prop, List<Gamer> list)
         {
-            PayTo(prop.tiersCost[prop.Tier], GetGamerByID(prop.ownerID));
+            PayTo(prop.tiersCost[prop.Tier],list.Find(item => item.ID == prop.ownerID));
         }
-
         public void BuildHouse(Property prop)
         {
-            PayTo(prop.HouseCost);
-            prop.Tier += 1;
+            if (prop.tag == "Transport" || prop.tag == "Electricity")
+            {
+                return;
+            }
+            if (prop.ownerID == ID)
+            {
+                PayTo(prop.HouseCost);
+                prop.Tier += 1;
+            }
+        }
+        public void DemolishHouse(Property prop)
+        {
+
+            if (prop.Tier > 0 && prop.ownerID == ID)
+            {
+                PayMe(prop.HouseCost / 2f);
+                prop.Tier -= 1;
+            }
+        }
+        public void SendPropertyTo(Property prop, Gamer gamer)
+        {
+            if (prop.ownerID == ID)
+            {
+                properties.Remove(prop);
+                prop.ownerID = gamer.ID;
+                gamer.properties.Add(prop);
+            }
         }
         public async void NotEnoughMoney()
         {
             await Form1.Client.SendTextMessageAsync(ID, "Нужно больше золота");
         }
-
+        public void Reset()
+        {
+            money = 15f;
+            properties = new List<Property>();
+        }
         public static Gamer GetGamerByID(long ID)
         {
-            List<Gamer> tmp = JsonConvert.DeserializeObject<List<Gamer>>(Form1.usersPath);
+            var tmp = JsonConvert.DeserializeObject<List<Gamer>>(File.ReadAllText(Form1.usersPath));
             return tmp.Find(item => item.ID == ID);
         }
     }
