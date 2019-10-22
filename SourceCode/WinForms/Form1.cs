@@ -131,7 +131,7 @@ namespace Monopoly_tgbot
                         else if (IsPayRentOrBuyCityRequest(args.Message.Text))
                         {
                             if (IsPayRentRequest(args.Message.Text, GamerList))
-                                Me.PayRent();
+                                Me.PayRent(GetPayRentProp(args.Message.Text, GamerList));
                             else
                                 Me.Buy(new Property(args.Message.Text));
                         }
@@ -334,7 +334,7 @@ namespace Monopoly_tgbot
             }
             return false;
         }
-        private bool IsPayRentRequest (string text, List<Gamer> list)
+        private bool IsPayRentRequest(string text, List<Gamer> list)
         {
             for (int i = 0; i < list.Count; i++)
             {
@@ -345,6 +345,18 @@ namespace Monopoly_tgbot
                 }
             }
             return false;
+        }
+        private Property GetPayRentProp(string text, List<Gamer> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                for (int j = 0; j < list[i].properties.Count; j++)
+                {
+                    if (list[i].properties[j].name == text)
+                        return list[i].properties[j];
+                }
+            }
+            throw new ArgumentException("лол, как сюда код дошел");
         }
 
 
