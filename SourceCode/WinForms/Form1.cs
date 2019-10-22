@@ -74,7 +74,7 @@ namespace Monopoly_tgbot
                     {
                         var GamerList = JsonConvert.DeserializeObject<List<Gamer>>(File.ReadAllText(usersPath));
                         GamerList.Add(new Gamer(args.Message.Chat.Id, args.Message.Text[0]));
-                        File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList, Formatting.Indented));
+                        File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList));
 
                         CommandsList.RemoveCommand("Add UserName", args);
                     }
@@ -101,15 +101,11 @@ namespace Monopoly_tgbot
                     {
                         var Me = GetGamer(args.Message.Chat.Id, GamerList);
 
-                        if (args.Message.Text[0] == '+' || args.Message.Text[0] == '-')
-                        {
-                            Stonks(args.Message.Text, Me, args);
-                        }
-                        else if (IsSendMoneyRequest(args.Message.Text, GamerList))
+                        if (IsSendMoneyRequest(args.Message.Text, GamerList))
                         {
                             SendMoneyRequest(args.Message.Text, Me, GamerList, args);
                         }
-                        else if (IsSendPropertyRequest(args.Message.Text, GamerList))
+                        else if(IsSendPropertyRequest(args.Message.Text, GamerList))
                         {
                             var tempGamer = FindGamer(args.Message.Text[0], GamerList);
                             Me.SendPropertyTo(GetProperty(args.Message.Text, tempGamer), tempGamer);
@@ -135,25 +131,25 @@ namespace Monopoly_tgbot
                             else
                                 Me.Buy(new Property(args.Message.Text));
                         }
-                        else if (args.Message.Text == "Баланс")
+                        else if(args.Message.Text[0] == '+' || args.Message.Text[0] == '-')
                         {
-                            await Client.SendTextMessageAsync(args.Message.Chat.Id, $"Ваш баланс: {Me.money}M", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
+                            Stonks(args.Message.Text, Me, args);
                         }
                         else if (args.Message.Text == "Вперед")
                         {
                             Me.PayMe(2);
-                            await Client.SendTextMessageAsync(args.Message.Chat.Id, $"Ваш баланс: {Me.money}M", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                         }
                         else
                         {
                             await Client.SendTextMessageAsync(args.Message.Chat.Id, "Неверный ввод", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                         }
+                        await Client.SendTextMessageAsync(args.Message.Chat.Id, $"Ваш баланс: {Me.money.ToString("0.000")}M", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                     }
                     else
                     {
                         await Client.SendTextMessageAsync(args.Message.Chat.Id, "Ты не в игре лол", ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
                     }
-                    File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList, Formatting.Indented));
+                    File.WriteAllText(usersPath, JsonConvert.SerializeObject(GamerList));
                 }
             }
         }
@@ -300,7 +296,7 @@ namespace Monopoly_tgbot
         {
             text = text.Remove(0, 2);
 
-            char[] separator = new char[1];
+            char[] separator = new char[2];
             separator[0] = ',';
             separator[1] = ' ';
 
@@ -417,7 +413,7 @@ namespace Monopoly_tgbot
             {
                 g.Reset();
             }
-            File.WriteAllText(usersPath,JsonConvert.SerializeObject(list, Formatting.Indented));
+            File.WriteAllText(usersPath,JsonConvert.SerializeObject(list));
             AddText("All users have been reseted");
         }
     }
