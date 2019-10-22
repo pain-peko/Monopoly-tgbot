@@ -1,1 +1,1 @@
-[{"ID":200857582,"userName":"И","money":15.0,"properties":[]},{"ID":274721450,"userName":"А","money":15.0,"properties":[]},{"ID":372740633,"userName":"Н","money":15.0,"properties":[]}]
+[{"ID":200857582,"userName":"И","money":15.0,"properties":[]},{"ID":274721450,"userName":"А","money":15.2,"properties":[{"ownerID":274721450,"name":"Рим","cost":1.8,"tag":"Orange","tiersCost":[0.14,0.7,2.0,5.5,7.5,9.5],"Tier":0,"HouseCost":1.0}]},{"ID":372740633,"userName":"Н","money":15.0,"properties":[]}]
