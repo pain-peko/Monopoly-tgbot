@@ -4,3 +4,4 @@ obj/*
 .vs/*
 *.exe
 *.pdb
+bin/Debug/Files/Users.json

@@ -19,6 +19,7 @@ namespace Monopoly_tgbot
     {
         public static TelegramBotClient Client;
 
+        public Random rand = new Random();
 
         public static string usersPath = "Files/Users.json";
 
@@ -138,6 +139,20 @@ namespace Monopoly_tgbot
                         else if (args.Message.Text == "Вперед")
                         {
                             Me.PayMe(2);
+                        }
+                        else if(args.Message.Text == "Баланс")
+                        {
+                            string ans = $"Ваш баланс: {Me.money.ToString("0.000")}M\n";
+                            List<float> balance = new List<float>();
+                            foreach(Gamer g in GamerList)
+                            {
+                                balance.Add(g.money);
+                            }
+                            balance = Shuffle(balance);
+                            foreach (float f in balance)
+                                ans += $"{RandomString()}: {f.ToString("0.000")}M\n";
+                            await Client.SendTextMessageAsync(args.Message.Chat.Id, ans, ParseMode.Default, false, false, 0, KeyboardConstructor.Keyboard());
+
                         }
                         else
                         {
@@ -400,7 +415,27 @@ namespace Monopoly_tgbot
                 this.Log.Text += text+"\n";
             }
         }
-
+        public  List<float> Shuffle(List<float> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rand.Next(n + 1);
+                float value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+            return list;
+        }
+        public string RandomString()
+        {
+            string hash = string.Empty;
+            
+            for (int i = 0; i < 7; i++)
+                hash += (char)rand.Next(36, 122);
+            return hash;
+        }
         private void Reset_Click(object sender, EventArgs e)
         {
             var list = JsonConvert.DeserializeObject<List<Gamer>>(File.ReadAllText(usersPath));

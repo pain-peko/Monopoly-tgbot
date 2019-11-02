@@ -17,6 +17,9 @@ namespace Monopoly_tgbot
                 new KeyboardButton[]
                 {
                     new KeyboardButton("Вперед"),
+                },new KeyboardButton[]
+                {
+                    new KeyboardButton("Баланс"),
                 }
             };
             return rmu;
