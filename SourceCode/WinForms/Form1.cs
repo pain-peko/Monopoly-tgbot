@@ -142,7 +142,7 @@ namespace Monopoly_tgbot
                         }
                         else if(args.Message.Text == "Баланс")
                         {
-                            string ans = $"Ваш баланс: {Me.money.ToString("0.000")}M\n";
+                            string ans =string.Empty;
                             List<float> balance = new List<float>();
                             foreach(Gamer g in GamerList)
                             {
